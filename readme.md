@@ -21,7 +21,7 @@ git clone https://github.com/andredvlsk/football-data.git
 ### 2. Create a Virtual Environment (optional)
 
 - You can create the way you prefer. I use conda.
-- Check conda website for documentation on how to create VENV.
+- Check conda website for documentation on how to create venv.
 
 [conda venv doc](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#)
 
@@ -42,9 +42,10 @@ Using the base season URLs from FBref, the script scrapes all public HTML tables
 URL format:
 https://fbref.com/en/comps/9/{season}/{season}-Premier-League-Stats
 
-Uses pandas.read_html() to load visible HTML tables and then stores as pandas dataframes
+Uses pandas.read_html() to load visible HTML tables.
 
 ### Player-Level Stats
+
 URL format:
 https://fbref.com/en/comps/9/{season}/{category}/{season}-Premier-League-Stats
 
@@ -74,11 +75,13 @@ Scrapes tables within HTML comments, using BeautifulSoup and pandas.read_html an
 
 To avoid overloading FBref servers, the scraper uses `time.sleep` to randomize delay before requests.
 
+Make sure to use your own **"user-agent header"**.
+
 ## Project File Structure
 ```
 football-data/
 │
-├── football-data.py         # Main script to run
+├── football-data.py         # Main script
 ├── requirements.txt         # Python dependencies
 ├── README.md                # Project documentation
 └── data/                    # Output folder for CSVs
@@ -87,14 +90,14 @@ football-data/
 
 - [x] Scrapping code
 - [x] Premier League data import
-- [ ] Clean/handle data in the data frames
 - [ ] Export Premier League data to csv
+- [ ] Clean/handle data in the dataframes
 - [ ] Expand scrapping to other leagues
 - [ ] ...
 
 ## Legal Notice
 
-All data is sourced and belongs to FBref.com.
+All data belongs to FBref.com.
 
 ## Contributions
 
