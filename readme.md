@@ -63,7 +63,7 @@ Target specific categories:
     -Playing time
     -Miscellaneous stats
 
-Scrapes tables within HTML comments, using BeautifulSoup and pandas.read_html and stores as pandas dataframes.
+Scrapes tables within HTML comments, using BeautifulSoup and pandas.read_html.
 
 ### Output Structure
 
