@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup, Comment
 from io import StringIO
 import time
 import random
+import copy
 
 #%%
 
@@ -52,7 +53,45 @@ def squad_scrapping(seasons:list):
 
     return squad_standard_stats_dict
 
-raw_data = squad_scrapping(seasons)
+raw_data_squad = squad_scrapping(seasons)
+
+#Copying dictionary to avoid changing raw data.
+data = copy.deepcopy(raw_data_squad)
+
+#%%
+
+## Cleaning squad data and exporting to .csv
+
+folderPL = ".\\data\\squad_stats\\PL"
+
+def squad_clean_export(data, folder:str):
+
+    tables_names_list = ['overall', 'home_away',
+                     'stats', 'stats_vs',
+                     'keepers','keepers_vs',
+                     'keeper_adv','keepers_adv_vs',
+                     'shooting','shooting_vs',
+                     'passing','passing_vs',
+                     'passing_types','passing_types_vs',
+                     'gca','gca_vs',
+                     'defense','defense_vs',
+                     'possession','possession_vs',
+                     'playingtime','playingtime_vs',
+                     'misc', 'misc_vs']
+    
+#Cleaning and organizing headers and saving tables in .csv
+    for key in data:
+        for i in range(0, len(data[key])):
+        #checking for MultiIdex in the headers and cleaning/organizing.
+            if isinstance(data[key][i].columns, pd.MultiIndex):
+                data[key][i].columns = [' '.join(col).strip() for col in data[key][i].columns.values]
+                data[key][i].columns = data[key][i].columns.str.replace(r".*level\w\w\s", "", regex = True)
+            else:
+                data[key][i].columns = data[key][i].columns
+        ## Saving to csv.
+            data[key][i].to_csv(f"{folder}\\PL_{key}_{tables_names_list[i]}.csv", sep=',', header = True)
+
+squad_clean_export(data = data, folder = folderPL)
 
 #%%
 ## Defining function for player_stats
@@ -81,3 +120,45 @@ def player_scrapping(seasons:list, categories:list):
     return player_stats_dict
 
 raw_data_player = player_scrapping(seasons, categories)
+
+#%%
+## Cleaning player data and exporting to .csv
+
+player_data = copy.deepcopy(raw_data_player)
+
+for key in player_data:
+    for cat in categories:
+
+        # Checking for MultiIdex in the headers and organizing.
+        if isinstance(player_data[key][cat][0].columns, pd.MultiIndex):
+            player_data[key][cat][0].columns = [' '.join(col).strip() for col in player_data[key][cat][0].columns.values]
+            player_data[key][cat][0].columns = player_data[key][cat][0].columns.str.replace(r".*level\w\w\s", "", regex = True)
+        else:
+            player_data[key][cat][0].columns = player_data[key][cat][0].columns
+        
+        # Dropping column "Matches" in all categories
+        # This column has no information
+        if "Matches" in player_data[key][cat][0].columns:
+            player_data[key][cat][0].drop("Matches", axis = 1, inplace = True)
+        else:
+            player_data[key][cat][0].columns = player_data[key][cat][0].columns
+
+        # Cleaning rows with no player information.
+        # Rows in the scrapping that are the same as header
+        header_df = list(player_data[key][cat][0].columns)
+        set_header_df = set(header_df)
+        index_list_row_remove = []
+
+        for i in range(0, len(player_data[key][cat][0])):
+            row = list(player_data[key][cat][0].iloc[i])
+            set_row = set(row)
+            if set_row.intersection(set_header_df):
+                index_list_row_remove.append(i)
+            else:
+                continue
+
+        player_data[key][cat][0].drop(index_list_row_remove, inplace = True)
+        player_data[key][cat][0] = player_data[key][cat][0].reset_index(drop = True)
+
+        ## Saving data to csv.
+        player_data[key][cat][0].to_csv(f".\\data\\player_stats\\PL\\PL_{key}_{cat}.csv", sep=',', header = True)
