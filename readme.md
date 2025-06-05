@@ -89,10 +89,12 @@ football-data/
 ## Task List
 
 - [x] Scrapping code
-- [x] Premier League data import
-- [ ] Export Premier League data to csv
-- [ ] Clean/handle data in the dataframes
+- [x] Clean/handle data after scrapping - prepare to export
+- [x] Export Premier League squads data to .csv
+- [x] Export Premier League players data to .csv
 - [ ] Expand scrapping to other leagues
+- [ ] Expand to scores and fixtures
+- [ ] Expand to player fixtures information
 - [ ] ...
 
 ## Legal Notice
